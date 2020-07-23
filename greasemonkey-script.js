@@ -8,9 +8,11 @@
 // @description 
 // ==/UserScript==
 
-const interval = 10000
-const log_endpoint = 'http://localhost:23456/log'
+const INTERVAL = 1000
+const INITIAL_DELAY = 3000
+const LOG_ENDPOINT = 'http://localhost:23456/log'
 
+let requestCounter = 0
 function getMarketSnapshot()
 {
   function toElemList(results)
@@ -52,16 +54,19 @@ function getMarketSnapshot()
     }
   }
 
-  console.log(`Logging snapshot to endpoint: ${log_endpoint}`)
+  requestCounter++
+  const thisCounter = requestCounter
+  console.log(`[${thisCounter}] Logging snapshot to endpoint: ${LOG_ENDPOINT}`)
   function print_response(response)
   {
-    console.log(`Log endpoint: ${response.status} ${response.responseText}`)
+    console.log(`[${thisCounter}] HTTP ${response.status} ${response.responseText}`)
   }
   const data = JSON.stringify({now, market_name, market_status, total_matched, entries})
-  GM.xmlHttpRequest({url: log_endpoint, method: 'POST', data,
-                     timeout: interval, onload: print_response, onerror: print_response})
+  GM.xmlHttpRequest({url: LOG_ENDPOINT, method: 'POST', data,
+                     timeout: 2*INTERVAL, onload: print_response, onerror: print_response})
 }
 
-console.log(`Betfair market snapshot: started logging with interval ${interval} ms`)
-getMarketSnapshot()
-window.setInterval(getMarketSnapshot, interval)
+window.setTimeout(function() {
+    console.log(`Betfair market snapshot: started logging with interval ${INTERVAL} ms`)
+    window.setInterval(getMarketSnapshot, INTERVAL)
+}, INITIAL_DELAY)
