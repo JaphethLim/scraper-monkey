@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Betfair market snapshot
 // @namespace   Violentmonkey Scripts
-// @match       https://betfair.com.au/exchange/*
+// @match       https://*betfair.com.au/exchange/*
 // @grant       GM.xmlHttpRequest
 // @version     1.0
 // @author      -
